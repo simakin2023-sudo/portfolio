@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KST_DEV | Frontend Решения</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💻</text></svg>">
+    
+    <meta name="theme-color" content="#0a0a0a">
+
+    <style>
+        :root {
+            --bg: #0a0a0a; --card: #161616; --accent: #007aff;
+            --text: #ffffff; --text-gray: #a0a0a0; --input-bg: #1a1a1a;
+        }
+        [data-theme="light"] {
+            --bg: #f5f5f7; --card: #ffffff; --accent: #007aff;
+            --text: #1d1d1f; --text-gray: #86868b; --input-bg: #e5e5e5;
+        }
+        * { transition: 0.3s; box-sizing: border-box; }
+        body {
+            background-color: var(--bg); color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif; margin: 0;
+            animation: fadeInPage 1s ease-out;
+        }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+
+        .theme-toggle {
+            cursor: pointer; padding: 12px; border-radius: 50%; background: var(--card);
+            border: 1px solid #333; position: fixed; top: 20px; right: 20px; z-index: 1000;
+        }
+
+        header { margin-bottom: 60px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1.5px; }
+
+        .hero { text-align: center; margin-bottom: 60px; min-height: 250px; }
+        .hero h1 { font-size: clamp(32px, 7vw, 60px); line-height: 1.1; margin-bottom: 20px; font-weight: 800; }
+        .hero span { color: var(--accent); border-right: 3px solid var(--accent); padding-right: 5px; animation: blink 0.7s infinite; }
+        @keyframes blink { 50% { border-color: transparent; } }
+
+        .promo-banner {
+            background: linear-gradient(90deg, #007aff, #00c6ff);
+            color: white; padding: 15px; border-radius: 16px;
+            text-align: center; font-weight: 700; margin-bottom: 40px;
+        }
+
+        .contact-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+        .btn { text-decoration: none; padding: 16px 32px; border-radius: 16px; font-weight: 700; display: flex; align-items: center; gap: 12px; border: none; cursor: pointer; }
+        .btn-tg { background: var(--accent); color: white; }
+        .btn-phone { border: 2px solid var(--accent); color: var(--accent); background: transparent; }
+
+        .section-title { font-size: 28px; margin: 80px 0 40px; font-weight: 800; display: flex; align-items: center; gap: 15px; }
+        .section-title::after { content: ""; height: 2px; background: #333; flex-grow: 1; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .card { background: var(--card); border: 1px solid #333; padding: 30px; border-radius: 24px; position: relative; cursor: pointer; }
+        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
+
+        .price-val { font-size: 32px; font-weight: 900; margin: 15px 0; color: var(--accent); }
+        .old-price { font-size: 16px; text-decoration: line-through; color: #ff4d4d; margin-right: 10px; opacity: 0.7; }
+
+        .scanner-box { background: var(--input-bg); padding: 15px; border-radius: 15px; margin-top: 15px; }
+        #passInput { width: 100%; background: var(--bg); border: 1px solid #444; color: var(--text); padding: 10px; border-radius: 10px; outline: none; }
+        .bar { height: 6px; background: #333; border-radius: 3px; overflow: hidden; margin-top: 10px;}
+        .fill { height: 100%; width: 0%; transition: 0.4s; }
+
+        /* FAQ АККОРДЕОН */
+        .faq-item { background: var(--card); border: 1px solid #333; border-radius: 16px; margin-bottom: 10px; overflow: hidden; }
+        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+        .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; color: var(--text-gray); font-size: 14px; transition: 0.3s ease-out; }
+        .faq-item.active .faq-answer { padding: 0 20px 20px; max-height: 200px; }
+        .faq-item.active .faq-icon { transform: rotate(45deg); color: var(--accent); }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .modal {
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85); backdrop-filter: blur(10px); align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: var(--card); border: 1px solid var(--accent); padding: 40px; border-radius: 32px;
+            max-width: 500px; width: 90%; position: relative; animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .close-modal { position: absolute; top: 25px; right: 25px; font-size: 28px; cursor: pointer; color: var(--text-gray); }
+        .modal-list { list-style: none; padding: 0; margin: 25px 0; }
+        .modal-list li { margin-bottom: 15px; display: flex; align-items: center; gap: 12px; font-weight: 500; }
+        .modal-list li::before { content: "✦"; color: var(--accent); font-weight: bold; }
+
+        footer { text-align: center; padding: 60px 0; color: var(--text-gray); font-size: 14px; border-top: 1px solid #222; margin-top: 80px;}
+    </style>
+</head>
+<body data-theme="dark">
+
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+
+    <div class="container">
+        <header>
+            <div class="logo">KST_DEV</div>
+            <div style="color: #4cd964; font-size: 14px; font-weight: 700;">🟢 Работаю на результат</div>
+        </header>
+
+        <section class="hero">
+            <h1>Создаю сайты для <br><span id="typewriter"></span></h1>
+            <div class="promo-banner">
+                🔥 АКЦИЯ: Сделаю сайт за ОТЗЫВ с огромной скидкой! 😊
+            </div>
+            <div class="contact-buttons">
+                <a href="https://t.me/XyLoq227" target="_blank" class="btn btn-tg">Telegram</a>
+                <a href="tel:+77711867214" class="btn btn-phone">📞 Позвонить</a>
+            </div>
+        </section>
+
+        <h2 class="section-title"><span>💰</span> Прайс-лист</h2>
+        <div class="grid">
+            <div class="card" onclick="openModal('vizitka')">
+                <h3>Сайт-Визитка</h3>
+                <div class="price-val"><span class="old-price">15k</span> 7 000 ₸</div>
+                <p style="font-size: 14px; color: var(--text-gray);">1 страница, контакты, полная адаптивность под телефоны.</p>
+                <div style="margin-top: 15px; font-size: 12px; color: var(--accent); font-weight: 700;">Подробнее →</div>
+            </div>
+            <div class="card" style="border-color: var(--accent);" onclick="openModal('landing')">
+                <h3>Landing Page</h3>
+                <div class="price-val"><span class="old-price">35k</span> 15 000 ₸</div>
+                <p style="font-size: 14px; color: var(--text-gray);">Продающая страница с плавной анимацией и формами.</p>
+                <div style="margin-top: 15px; font-size: 12px; color: var(--accent); font-weight: 700;">Подробнее →</div>
+            </div>
+            <div class="card" onclick="openModal('info')">
+                <h3>Инфо-сайт</h3>
+                <div class="price-val">от 25 000 ₸</div>
+                <p style="font-size: 14px; color: var(--text-gray);">Многостраничный проект для вашего бизнеса или блога.</p>
+                <div style="margin-top: 15px; font-size: 12px; color: var(--accent); font-weight: 700;">Подробнее →</div>
+            </div>
+        </div>
+
+        <h2 class="section-title"><span>🚀</span> Мои проекты</h2>
+        <div class="grid">
+            <div class="card">
+                <div style="font-size: 32px; margin-bottom: 15px;">💰</div>
+                <h3>Dream Goal Tracker</h3>
+                <p style="color: var(--text-gray);">Веб-приложение для расчета накоплений. Помогает визуализировать путь к цели.</p>
+                <a href="#" style="color: var(--accent); text-decoration: none; font-weight: 800;">Открыть →</a>
+            </div>
+
+            <div class="card">
+                <div style="font-size: 32px; margin-bottom: 15px;">🛡️</div>
+                <h3>CyberSafe Scanner</h3>
+                <div class="scanner-box">
+                    <input type="text" id="passInput" placeholder="Проверить пароль..." oninput="checkPass()">
+                    <div class="bar"><div id="fill" class="fill"></div></div>
+                    <div id="status" style="font-size: 12px; margin-top: 8px; font-weight: 600;">Ожидание...</div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title"><span>❓</span> Вопросы</h2>
+        <div class="faq-container">
+            <div class="faq-item" onclick="this.classList.toggle('active')">
+                <div class="faq-question">Нужно ли платить за хостинг? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">Нет, я размещаю ваши сайты на надежном сервере Netlify абсолютно бесплатно.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('active')">
+                <div class="faq-question">Как вносить изменения на сайт? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">Вы просто пишете мне в WhatsApp, и я вношу правки в течение часа. Обслуживание стоит всего 250₸ в месяц.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('active')">
+                <div class="faq-question">Поможете ли вы с покупкой домена? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">Да, я помогу выбрать и привязать домен (например, .kz), чтобы ваш бизнес выглядел солидно.</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>💻 2026 KST_DEV • Kostanay • Сделано с ❤️</p>
+        </footer>
+    </div>
+
+    <div id="priceModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle" style="margin-top: 0; color: var(--accent);">Заголовок</h2>
+            <ul id="modalList" class="modal-list"></ul>
+            <button class="btn btn-tg" style="width: 100%; justify-content: center;" onclick="closeModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        const priceData = {
+            'vizitka': { title: 'Сайт-Визитка', features: ['Срок разработки: 1 день', 'Полная мобильная адаптация', 'Интеграция кнопок WhatsApp/TG', 'Размещение на хостинге', 'Пожизненная поддержка (250₸)'] },
+            'landing': { title: 'Landing Page', features: ['Срок разработки: 3-4 дня', 'Индивидуальный дизайн под нишу', 'Плавные анимации появления', 'Форма обратной связи', 'SEO-оптимизация контента'] },
+            'info': { title: 'Инфо-сайт', features: ['Многостраничная структура', 'Разработка до 5 разделов', 'Удобная навигация (меню)', 'Галерея и прайс-листы', 'Индивидуальные условия'] }
+        };
+
+        function openModal(type) {
+            const data = priceData[type];
+            document.getElementById('modalTitle').innerText = data.title;
+            const list = document.getElementById('modalList');
+            list.innerHTML = '';
+            data.features.forEach(f => {
+                const li = document.createElement('li');
+                li.innerText = f;
+                list.appendChild(li);
+            });
+            document.getElementById('priceModal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('priceModal').style.display = 'none'; }
+        window.onclick = function(event) { if (event.target == document.getElementById('priceModal')) closeModal(); }
+
+        function toggleTheme() {
+            const b = document.body;
+            const currentTheme = b.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            b.setAttribute('data-theme', newTheme);
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', newTheme === 'dark' ? '#0a0a0a' : '#f5f5f7');
+        }
+
+        const textElement = document.getElementById('typewriter');
+        const words = ["твоего старта", "твоих продаж", "твоих идей", "быстрого роста"];
+        let wordIndex = 0; let charIndex = 0; let isDeleting = false;
+
+        function type() {
+            const currentWord = words[wordIndex];
+            if (isDeleting) { textElement.textContent = currentWord.substring(0, charIndex - 1); charIndex--; }
+            else { textElement.textContent = currentWord.substring(0, charIndex + 1); charIndex++; }
+            let typeSpeed = isDeleting ? 60 : 120;
+            if (!isDeleting && charIndex === currentWord.length) { isDeleting = true; typeSpeed = 2500; }
+            else if (isDeleting && charIndex === 0) { isDeleting = false; wordIndex = (wordIndex + 1) % words.length; typeSpeed = 400; }
+            setTimeout(type, typeSpeed);
+        }
+
+        function checkPass() {
+            const val = document.getElementById('passInput').value;
+            const fill = document.getElementById('fill');
+            const status = document.getElementById('status');
+            let s = 0;
+            if (val.length > 7) s += 25;
+            if (val.match(/[A-Z]/)) s += 25;
+            if (val.match(/[0-9]/)) s += 25;
+            if (val.match(/[^A-Za-z0-9]/)) s += 25;
+            fill.style.width = s + "%";
+            if (s <= 25) { fill.style.background = "#ff4d4d"; status.innerText = "Слабая защита"; }
+            else if (s <= 50) { fill.style.background = "#ffbd44"; status.innerText = "Средняя защита"; }
+            else if (s <= 75) { fill.style.background = "#007aff"; status.innerText = "Хорошая защита"; }
+            else { fill.style.background = "#4cd964"; status.innerText = "Надежный пароль"; }
+        }
+
+        document.addEventListener('DOMContentLoaded', type);
+    </script>
+</body>
+</html>
